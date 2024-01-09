@@ -5,19 +5,37 @@
   <title>Document</title>
 </head>
 <body>
+  <input type="text" id="searchInput" placeholder="Enter search keyword">
   <img src="#">
   <button id="fetchButton">Fetch New Image</button>
+
   <script>
+    
       const img = document.querySelector('img');
       const fetchButton = document.getElementById('fetchButton');
+      const searchInput = document.getElementById('searchInput');
+
 
 function fetchNewImage(){
-      fetch('https://api.giphy.com/v1/gifs/translate?api_key=zncF6BzvFUF0PgNCQ527nbd0eOOJXe71&s=cats', {mode: 'cors'})
+      
+      const searchKeyword = searchInput.value || 'cats'; // Default to 'cats' if the search input is empty
+
+
+      fetch(`https://api.giphy.com/v1/gifs/translate?api_key=zncF6BzvFUF0PgNCQ527nbd0eOOJXe71&s=${searchKeyword}`, {mode: 'cors'})
       .then(function(response) {
+        if (!response.ok){
+            throw new Error(`Failed to fetch. status: ${response.status}`);
+        }
         return response.json();
       })
       .then(function(response) {
-        img.src = response.data.images.original.url;})
+        if (response.data.images && response.data.images.original.url) {
+            img.src = response.data.images.original.url;
+        }
+        else {
+            console.log('No image found for the given keyword.');
+        }
+    })
         .catch(function(error){
             console.log('Error fetching image:', error);
         })
