@@ -16,29 +16,28 @@
       const searchInput = document.getElementById('searchInput');
 
 
-function fetchNewImage(){
+async function fetchNewImage(){
       
       const searchKeyword = searchInput.value || 'cats'; // Default to 'cats' if the search input is empty
 
-
-      fetch(`https://api.giphy.com/v1/gifs/translate?api_key=zncF6BzvFUF0PgNCQ527nbd0eOOJXe71&s=${searchKeyword}`, {mode: 'cors'})
-      .then(function(response) {
+  try {
+   const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=zncF6BzvFUF0PgNCQ527nbd0eOOJXe71&s=${searchKeyword}`, {mode: 'cors'})
         if (!response.ok){
             throw new Error(`Failed to fetch. status: ${response.status}`);
         }
-        return response.json();
-      })
-      .then(function(response) {
-        if (response.data.images && response.data.images.original.url) {
-            img.src = response.data.images.original.url;
+        const responseData = await response.json();
+      
+      if (responseData.data.images && responseData.data.images.original.url) {
+            img.src = responseData.data.images.original.url;
         }
         else {
             console.log('No image found for the given keyword.');
         }
-    })
-        .catch(function(error){
+    }
+        catch(error){
             console.log('Error fetching image:', error);
-        })
+        }
+
 };
 
 fetchNewImage();
